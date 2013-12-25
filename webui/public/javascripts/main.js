@@ -126,6 +126,8 @@ var Application = Backbone.View.extend({
 				var distance = splot.width() / data.ds.length
 				var amount = Math.round(50 / distance);
 				var count = 0;
+				var min = 100000;
+				var max = -100000;
 				_.each(listPair, function(pair) {
 					
 					if (amount == 0 || count % amount == 0) 
@@ -135,12 +137,22 @@ var Application = Backbone.View.extend({
 					count ++;
 					
 					gdata.datasets[0].data.push(pair.val);
+					
+					if (pair.val > max) max = pair.val;
+					if (pair.val < min) min = pair.val;
 				});
 				
 				var options = {
 					bezierCurve : false,
 					animation: false,
 					pointRadius: 1,
+				}
+				
+				if (min == max) {
+					options.scaleOverride = true;
+					options.scaleSteps = 2;
+					options.scaleStepWidth = min;
+					options.scaleStartValue = 0;
 				}
 				
 				chart.Line(gdata, options);
