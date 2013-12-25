@@ -1,0 +1,123 @@
+@* This shows a home page, with a search box *@
+@(title: String)
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>@title</title>
+        
+        <!-- Include bootstrap3 -->
+        <link rel="stylesheet" href="@routes.Assets.at("bootstrap/bootstrap.min.css")">
+        
+        <!-- Include custom css -->
+         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+		
+		<!-- Include js frameworks -->
+        <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/underscore-min.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/backbone-min.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("bootstrap/js/bootstrap.min.js")" type="text/javascript"></script>
+        <script src="@routes.Assets.at("javascripts/Chart.js")" type="text/javascript"></script>
+        
+        <!-- Include main.js -->
+        <script src="@routes.Assets.at("javascripts/main.js")" type="text/javascript"></script>
+        
+        
+        <!-- Include javascript routes -->
+        <script src="@routes.Application.routes" type="text/javascript"></script>
+    </head>
+    <body>
+    	<div class="override navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container">
+			  <div class="navbar-header">
+			    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+			      <span class="sr-only">Toggle navigation</span>
+			      <span class="icon-bar"></span>
+			      <span class="icon-bar"></span>
+			      <span class="icon-bar"></span>
+			    </button>
+			    <a href="#" class="navbar-brand">SENFIN</a>
+			  </div>
+			  <div class="collapse navbar-collapse">
+			    <ul class="nav navbar-nav navbar-right">
+			    	<li><a id="show_about" href="#">About / Help</a></li>
+			    </ul>
+			  </div><!--/.nav-collapse -->
+			</div>
+		</div>
+		<div class="content">
+	        <div class="container">
+		        <form id="form_search">
+		        	<div class="searchbox">
+		        		<button id="btn_search" type="button" class="btn btn-primary">SEARCH</button>
+	        			<input id="input_search" type="text" placeholder="Type in 'a b' to search for sensors whose output fall within [a, b]."/>
+	        			<img id="search_wait" src="@routes.Assets.at("images/searching.gif")" style="display:none" />
+		        		<div class="clearfix"></div>
+		        	</div>
+		        </form>
+	        </div>
+	        <div class="container">
+	        	<div class="row" id="result_visual">
+	        	</div>
+	        </div>
+	        <!-- <div id="result_text" class="container">
+	        	
+	        </div> -->
+	        <div class="clearfix"></div>
+	        
+	        
+	        <div id="about_dialog" class="modal fade">
+			  <div class="modal-dialog">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			        <h3 class="modal-title">
+			        	Welcome to SENFIN
+			        </h3>
+			      </div>
+			      <div class="modal-body">
+		        	@about()
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+			      </div>
+			    </div><!-- /.modal-content -->
+			  </div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
+        </div>
+        <div id="footer">
+        	<div class="container">
+        		<span>SENFIN - Searching the Internet of Things</span>
+        	</div>
+        </div>
+        
+<script type="text/html" id="sv_tpl">
+<div class="col-md-6" id="sensor_<%= sid %>">
+<div class="sensor_detail">
+	<div class="verification_text">Verifying</div>
+	<div><b>Matching probability</b> - <span><%= rank %></span></div>
+	<div class="space"></div>
+	<div class="clearfix"></div>
+	<div class="sensor_plot">
+		<canvas id="plot_<%= sid %>"></canvas>
+	</div>
+	<div>
+	<label>URI</label>
+	<input type="text" class="uri" value="<%= uri %>"/>
+	<label>Meta</label>
+	<textarea><%- meta %></textarea>
+	</div>
+</div>
+</div>
+</script>
+
+
+<script type="text/html" id="temporaryData">
+[{"matchingProbability":1.0000001,"sensorUri":"https://api.xively.com/v2/feeds/779284175/datastreams/9.json","sensorMetaData":"Description: No description available\nUnit symbol: UVindex\nUnit label: UV level","currentDataStream":[{"timeStamp":1386166558899,"value":0.09},{"timeStamp":1386166619925,"value":0.09},{"timeStamp":1386166675631,"value":0.01},{"timeStamp":1386166681367,"value":0.0}]},{"matchingProbability":1.0,"sensorUri":"https://api.xively.com/v2/feeds/28866/datastreams/1.json","sensorMetaData":"Description: No description available\nUnit symbol: uSv/hr\nUnit label: uSv/hr","currentDataStream":[{"timeStamp":1386166537126,"value":0.07},{"timeStamp":1386166597036,"value":0.093},{"timeStamp":1386166656954,"value":0.078}]},{"matchingProbability":1.0,"sensorUri":"https://api.xively.com/v2/feeds/122351/datastreams/2.json","sensorMetaData":"Description: No description available\nUnit symbol: Not available\nUnit label: Average Load","currentDataStream":[{"timeStamp":1386166557377,"value":0.09},{"timeStamp":1386166619856,"value":0.15},{"timeStamp":1386166670298,"value":0.06},{"timeStamp":1386166682590,"value":0.05}]},{"matchingProbability":1.0,"sensorUri":"https://api.xively.com/v2/feeds/791761361/datastreams/Irms.json","sensorMetaData":"Description: No description available\nUnit symbol: A\nUnit label: A","currentDataStream":[{"timeStamp":1386166551890,"value":0.84},{"timeStamp":1386166612543,"value":0.69},{"timeStamp":1386166673113,"value":0.7}]},{"matchingProbability":0.9999999,"sensorUri":"https://api.xively.com/v2/feeds/791761361/datastreams/PowerFactor.json","sensorMetaData":"Description: No description available\nUnit: Not available","currentDataStream":[{"timeStamp":1386166551890,"value":0.72},{"timeStamp":1386166612543,"value":0.47},{"timeStamp":1386166673113,"value":0.48},{"timeStamp":1386166688271,"value":0.47}]},{"matchingProbability":0.9150851,"sensorUri":"https://api.xively.com/v2/feeds/60032/datastreams/0.json","sensorMetaData":"Description: \"Power\"\nUnit: Not available","currentDataStream":[{"timeStamp":1386166559337,"value":1.67},{"timeStamp":1386166619127,"value":1.656},{"timeStamp":1386166679994,"value":0.819},{"timeStamp":1386166689616,"value":0.83}]},{"matchingProbability":0.90491956,"sensorUri":"https://api.xively.com/v2/feeds/91158/datastreams/T28B9E36E04000000.json","sensorMetaData":"Description: No description available\nUnit: Not available","currentDataStream":[{"timeStamp":1386166546380,"value":0.5},{"timeStamp":1386166606517,"value":0.5},{"timeStamp":1386166666669,"value":0.5},{"timeStamp":1386166686693,"value":0.5}]},{"matchingProbability":0.38054007,"sensorUri":"https://api.xively.com/v2/feeds/102108/datastreams/CO.json","sensorMetaData":"Description: No description available\nUnit: Not available","currentDataStream":[{"timeStamp":1386166558702,"value":2.0},{"timeStamp":1386166609654,"value":3.0},{"timeStamp":1386166679862,"value":4.0},{"timeStamp":1386166691028,"value":4.0}]}]
+</script>
+
+    </body>
+</html>

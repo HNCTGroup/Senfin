@@ -1,0 +1,130 @@
+@import "../bootstrap/variables.less";
+
+.navbar-inverse {
+	background-color:@brand-primary;
+}
+
+.override .navbar-brand {
+	color:#fff;
+	font-weight:bold;
+	font-size:20px;
+}
+
+.content {
+	margin-top:50px;
+	padding: 30px;
+	min-height:100px;
+	border-bottom: 1px solid @brand-primary;
+}
+
+#footer {
+	background-color:@brand-primary;
+	text-align: center;
+	padding:20px;
+	
+	span {
+		color: @navbar-inverse-link-color;
+	}
+}
+
+#about_dialog .modal-body {
+	height:400px;
+	overflow-y: auto;
+}
+
+.modal-dialog {
+	width:750px;
+}
+
+.modal-header, .modal-footer {
+	background-color: @brand-primary;
+	color: @navbar-inverse-link-color;
+}
+
+.searchbox {
+	
+	width:600px;
+	margin:0px auto;
+	border: 1px solid #266f5c;
+	border-radius:5px;
+	padding:10px;
+	
+	#search_weight {
+		height:30px;
+		width:30px;
+	}
+	
+	.btn {
+		float:right;
+		border:none;
+	}
+
+	#input_search {
+		line-height:30px;
+		width:495px;
+		height:100%;
+		border:none;
+	}
+}
+
+#result_text {
+	overflow-y:scroll;
+	height:200px;
+}
+
+.sensor_detail {
+	
+	background-color: lighten(@brand-primary, 56%);
+	border:1px solid black;//lighten(@brand-primary, 46%);
+	padding:10px;
+	border-radius:10px;
+	margin-top:20px;
+	
+		
+	.verification_text {
+		background-color:#fff;
+		color:red;
+		margin:0px 30px 10px 30px;
+		text-align:center;
+	}
+	
+	.space {
+		width:25px;
+		display:inline-block;
+	}
+	
+	.uri {
+		display:inline-block;
+		width:90%;
+		overflow-x:auto;
+		height:25px;
+	}
+	
+	label {
+		font-weight:none;
+		width:40px;
+	}
+	
+	span {
+		font-weight:bold;
+		color:@brand-primary;
+	}
+	
+	canvas {
+		width: 100% !important;
+		height: 100% !important;
+		margin:auto !important;
+	}
+	
+	.sensor_plot {
+		width:100%;
+		height:140px;
+		margin: 20px auto;
+	}
+	
+	textarea {
+		width:90%;
+		height:100px;
+		resize:none;
+	}
+}

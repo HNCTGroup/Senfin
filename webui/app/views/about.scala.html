@@ -1,0 +1,24 @@
+@* about Template File *@
+@(param: Any)
+<p>We are witnessing the formation of an Internet of Things (IoT), where real-world objects and places(e.g., plants, chairs, rooms) are augmented with sensors (e.g., motion detectors, microphones, cameras) and actuators (e.g., motors, LED, speakers) are connected to the Internet, enabling them to publish their generated data on the Web. By mashing up these "smart things'', or Things, with the services and data available on the Web, novel IoT applications can be created.</p>
+
+<p>One such application is "search the IoT for real-world objects and places (i.e., Things)". 
+For example, a car driver may want to find an empty parking spot nearby, or a building manager may want to find out which electronic appliances are currently consuming excessive power. 
+Since Things (i.e., parking spots, electronic appliances) are augmented with sensors, the underlying problem needs to be solved is:</p> 
+
+<p><center><b>Search the IoT for sensors whose recent output is within a certain range.</b></center></p>
+
+<p>The information about the found sensors will be used to answer the above questions. For example, electronic appliances that have sensors that are reading values in the range [1500 Watts, 2000 Watts] are considered consuming excessive power.</p>
+
+<p>Our sensor search engine, SENFIN, is an attempt to tackle this problem. Given a value range <b>[a, b]</b>, and a time interval <b>t</b> time units, SENFIN returns sensors available in the IoT whose output during the last <b>t</b> time units fall <i>mostly</i> within <b>[a, b]</b>.</p> 
+
+<p>Currently, SENFIN is still in early stage, indexing live output of more than 20000 sensors on a single commodity server. Its search service can be accessed by any software program through a set of RESTful API calls.</p>
+
+<p>This web site is a front-end for SENFIN, which uses the API. To perform a search for sensors via this web site, please enter a search query in either of following forms:</p>
+
+<ul><li>"a b t" : specifying the interested output signal range <b>[a, b]</b> and the time interval <b>t</b> in minutes.</li>
+<li>"a b" : a special case with <b>t</b> = 15 minutes.</li></ul>
+
+<p>After entering the query, sensors that are found by SENFIN will be returned along with their meta-information and actual sensor output. The results are ranked based on their relevance.</p>
+
+<p>For more information, please contact: Cuong Truong at <b>tduccuong@@gmail.com.</b></p>
