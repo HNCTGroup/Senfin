@@ -1,10 +1,16 @@
 package forms
 
+case class SensorData(
+	sensorUri: String,
+	lssId: Int,
+	sds: Int
+)
+
 case class SensorVerification(
 	valLow : BigDecimal,
 	valHigh : BigDecimal,
 	time: Int,
-	sensorUri: List[String],
+	sensors: List[SensorData],
 	numItems: Int
 )
 
@@ -20,7 +26,11 @@ object SensorVerificationForm {
             "valLow" -> bigDecimal,
             "valHigh" -> bigDecimal,
             "time" -> number,
-            "sensorUri" -> list(text),
+            "sensors" -> list(mapping(
+                "sensorUri" -> text,
+                "lssId" -> number,
+                "sds" -> number
+            )(SensorData.apply)(SensorData.unapply)),
             "numItems" -> number
         )(SensorVerification.apply)(SensorVerification.unapply)
     )

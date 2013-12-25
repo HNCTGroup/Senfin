@@ -98,7 +98,7 @@
 <div class="col-md-6" id="sensor_<%= sid %>">
 <div class="sensor_detail">
 	<div class="verification_text">Verifying</div>
-	<div><b>Matching probability</b> - <span><%= rank %></span></div>
+	<div><b>PSC</b> - <span><%= rank %></span>&nbsp;<b>MSC</b> - <span class="sensor_msc"></span></div>
 	<div class="space"></div>
 	<div class="clearfix"></div>
 	<div class="sensor_plot">
@@ -110,6 +110,10 @@
 	<label>Meta</label>
 	<textarea><%- meta %></textarea>
 	</div>
+	<form class="hidden">
+		<input name="lssId" type="hidden" value="<%= lssId %>"/>
+		<input name="sds" type="hidden" value="<%= sds %>"/>
+	</form>
 </div>
 </div>
 </script>

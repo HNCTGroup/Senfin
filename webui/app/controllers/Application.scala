@@ -17,8 +17,8 @@ import scala.concurrent.duration._
 
 object Application extends Controller {
 
-	val serviceURL = "http://iotsearch.dyndns.biz:1180/search/css_no_verification"
-	val verificationURL = "http://iotsearch.dyndns.biz:1180/verification/sensor"
+	val serviceURL = "http://senfin.dyndns.org:1180/search/css"
+	val verificationURL = "http://senfin.dyndns.org:1180/verification/sensor"
 		
 	/**
 	 * This is to support async action.
@@ -34,7 +34,7 @@ object Application extends Controller {
 	 * a Future[SimpleResult]
 	 */
 	def doSearch(rStart: Float, rEnd: Float, duration: Integer, k: Integer) = Action.async {
-		val targetURL = serviceURL + "/" + rStart + "/" + rEnd + "/" + duration + "/" + k;
+		val targetURL = serviceURL + "/" + rStart + "/" + rEnd //+ "/" + duration + "/" + k;
 		Logger.info(targetURL);
 		val holder: WSRequestHolder = WS.url(targetURL)
 		val response = holder.get().map {
@@ -51,11 +51,17 @@ object Application extends Controller {
 		var jsResponse : JsArray = JsArray()
 		
 		// for each of the uri, call the verification server
-		data.sensorUri.foreach( uri => {
+		data.sensors.foreach( sensor => {
 			// accumulate the returned json value to the list of responses
 			val holder: WSRequestHolder = WS.url(targetURL)
 			
-			val response = holder.post(uri)
+			val uri = sensor.sensorUri
+			val lssId = sensor.lssId
+			val sds = sensor.sds
+			
+			val payLoad = Json.obj("uri" -> uri, "lssId" -> lssId, "sds" -> sds)
+			
+			val response = holder.post(payLoad.toString())
 			
 			val futr = response.map { resp =>
 				jsResponse = jsResponse.append(Json.obj("uri" -> uri, "veriResult" -> resp.json))

@@ -45,9 +45,11 @@ var Application = Backbone.View.extend({
 					// but for the speed sake
 					var html = sensorTpl({
 						sid:count,
-						rank:elem.mp, 
+						rank:elem.psc, 
 						uri:elem.uri,
-						meta:elem.md
+						meta:elem.md,
+						lssId: elem.lssId,
+						sds: elem.sds
 					});
 					
 					holder.append(html);
@@ -76,7 +78,12 @@ var Application = Backbone.View.extend({
 		
 		var queryUrl = jsRoutes.controllers.Application.doVerification().url;
 		var sensorUri = encodeURI($(sensorId+" .uri").val());
-		var postData = "valLow="+a+"&valHigh="+b+"&time="+h+"&numItems="+k+"&sensorUri[0]="+sensorUri;
+		var lssId = $(sensorId+" input[name=lssId]").val();
+		var sds = $(sensorId+" input[name=sds]").val();
+		var postData = "valLow="+a+"&valHigh="+b+"&time="+h+"&numItems="+k
+						+"&sensors[0].sensorUri="+sensorUri+"&sensors[0].lssId="+lssId+"&sensors[0].sds="+sds;
+		
+		thisView = this;
 		
 		$.ajax({
 			url: queryUrl,
@@ -93,6 +100,8 @@ var Application = Backbone.View.extend({
 					sensorHolder.remove();
 					return;	// invalid sensor
 				}
+				
+				$(".sensor_msc", sensorHolder).html(data.msc);
 				
 				var splot = $(sensorId+" .sensor_plot");
 				splot.show()
@@ -140,11 +149,15 @@ var Application = Backbone.View.extend({
 				//alert("There is an error processing the request\nStatus: "+status+"\nError: "+errorThrown);
 				var sensorHolder = $(sensorId)
 				sensorHolder.remove();	// cannot be verified, remove it!!
+			},
+			complete: function() {
+				
 			}
 		});
 		
 		// verify the next sensor
-		window.setTimeout(_.bind(this.verifySensor, this, id+1, total, a, b, h, k), 10);
+		window.setTimeout(_.bind(thisView.verifySensor, thisView, id+1, total, a, b, h, k), 100);
+
 	}
 	
 });
