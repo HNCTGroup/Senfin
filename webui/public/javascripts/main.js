@@ -17,20 +17,56 @@ var Application = Backbone.View.extend({
 		return false;
 	},
 	
+	nextWord : function(str, indFrom) {
+		var start = 0;
+		var end = 0;
+		for (int i=indFrom; i<str.length-1; i++) {
+			if (str.charAt(i)==" " && str.charAt(i+1)!=" ")
+				start = i+1;
+			if (str.charAt(i)!=" " && str.charAt(i+1)==" ") {
+				end = i+1;
+				break;
+			}
+		}
+		var obj = {
+				start: start, 
+				end: end
+		}
+		return obj;
+	},
+	
 	doSearch : function (event) {
 		event.preventDefault();
-		var arr = $("#input_search").val().split(" ");
-		var k = 10;
-		if (arr.length > 3)	k = arr[3];
+		var thisView = this;
 		
-		var h = 15;
-		if (arr.length > 2) h = arr[2];
+		// parse input
+		var query = $("#input_search").val();
+		var indRange = -1;
+		var rlen = 6;
+		var tmp = query.indexOf("range:");
+		if (tmp >= 0) indRange = tmp;
+		else {
+			tmp = query.indexOf("range :");
+			if (tmp >= 0) { indRange = tmp; rlen = 7; }
+			else {
+				tmp = query.indexOf("range ");
+				if (tmp >= 0) { indRange = tmp; rlen = 7; }
+			}
+		}
 		
-		var queryUrl = jsRoutes.controllers.Application.doSearch(arr[0], arr[1], h).url+"?amount="+k;
+		var a = 0, b = 1, t = 15;
+		var meta = "";
+		var range = "";
+		
+		if (indRange >= 0) {
+			var word1 = thisView.nextWord(query, indRange+rlen);
+			a = query.substring(word1.start, word1.end);
+		}
+		
+		var queryUrl = jsRoutes.controllers.Application.doSearch(a, b, t).url+"?amount=10";
 		$("#search_wait").show();
 		$("#btn_search").hide();
 		
-		var thisView = this;
 		$.ajax({
 			url: queryUrl,
 			dataType: "json",
@@ -40,25 +76,26 @@ var Application = Backbone.View.extend({
 				holder.html("");
 				var count = 0;
 				_.each(data, function(elem) {
-					count ++;
-					// we can use a view here to display,
-					// but for the speed sake
-					var html = sensorTpl({
-						sid:count,
-						rank:elem.psc, 
-						uri:elem.uri,
-						meta:elem.md,
-						lssId: elem.lssId,
-						sds: elem.sds
-					});
-					
-					holder.append(html);
-					$(".sensor_plot", holder).hide();
-					
+					if (elem.md.indexOf(meta) >= 0) {
+						count ++;
+						// we can use a view here to display,
+						// but for the speed sake
+						var html = sensorTpl({
+							sid:count,
+							rank:elem.psc, 
+							uri:elem.uri,
+							meta:elem.md,
+							lssId: elem.lssId,
+							sds: elem.sds
+						});
+						
+						holder.append(html);
+						$(".sensor_plot", holder).hide();
+					}
 				});
 				
 				// start verifying
-				window.setTimeout(_.bind(thisView.verifySensor, thisView, 1, count, arr[0], arr[1], h, k), 10);
+				window.setTimeout(_.bind(thisView.verifySensor, thisView, 1, count, a, b, t, 10), 10);
 			},
 			error: function (jqXHR, status, errorThrown) {
 				alert("There is an error processing the request\nStatus: "+status+"\nError: "+errorThrown);

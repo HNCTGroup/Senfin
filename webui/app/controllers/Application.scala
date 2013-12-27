@@ -17,8 +17,8 @@ import scala.concurrent.duration._
 
 object Application extends Controller {
 
-	val serviceURL = "http://senfin.dyndns.org:1180/search/css"
-	val verificationURL = "http://senfin.dyndns.org:1180/verification/sensor"
+	val serviceURL = "http://thingsurf.dyndns.org:1180/search/css"
+	val verificationURL = "http://thingsurf.dyndns.org:1180/verification/sensor"
 		
 	/**
 	 * This is to support async action.
@@ -26,7 +26,7 @@ object Application extends Controller {
 	implicit val context = scala.concurrent.ExecutionContext.Implicits.global
 	
 	def index = Action {
-		Ok(views.html.index("Welcome to SENFIN - Searching the Internet of Things!"))
+		Ok(views.html.index("Welcome to ThingSurf - Surfing the Internet of Things!"))
 	}
 
 	/**
