@@ -20,21 +20,28 @@ var Application = Backbone.View.extend({
 	},
 	
 	nextWord : function(str, indFrom) {
-		var start = 0;
-		var end = 0;
-		for (var i=indFrom; i<str.length-1; i++) {
-			if (str.charAt(i)==" " && str.charAt(i+1)!=" ")
-				start = i+1;
-			if (str.charAt(i)!=" " && str.charAt(i+1)==" ") {
-				end = i+1;
-				break;
+		var ib = 0, ie = 0;
+		if (indFrom < str.length) {
+			for (ie=indFrom+1; ie<str.length; ie++) {
+				if (str.charAt(ie-1)==" " && str.charAt(ie)!=" ")
+					ib = ie;
+				if (str.charAt(ie-1)!=" " && str.charAt(ie)==" ")
+					break;
 			}
+			if (ib==0) ib = indFrom;
+		} else {
+			ib = str.length;
+			ie = ib;
 		}
-		var obj = {
-				start: start, 
-				end: end
-		}
+		var obj = { ib: ib, ie: ie }
 		return obj;
+	},
+	
+	containWords : function(str, meta) {
+		var contained = false;
+		for (var i=0; i<meta.length; i++)
+			contained = contained || (str.indexOf(meta[i])>=0);
+		return contained;
 	},
 	
 	doSearch : function (event) {
@@ -43,70 +50,82 @@ var Application = Backbone.View.extend({
 		
 		// parse input
 		var query = $("#input_search").val();
-		var indRange = -1;
-		var rlen = 6;
-		var tmp = query.indexOf("range:");
-		if (tmp >= 0) indRange = tmp;
-		else {
-			tmp = query.indexOf("range :");
-			if (tmp >= 0) { indRange = tmp; rlen = 7; }
-			else {
-				tmp = query.indexOf("range ");
-				if (tmp >= 0) { indRange = tmp; rlen = 7; }
+		query = query.replace("range:", "range: ");
+		query = query.replace(/\s+/g, " ");
+		query = query.replace(/^\s+|\s+$/g, "");
+		var words = query.split(" ");
+		var ind = -1;
+		for (var i=0; i<words.length; i++) {
+			if (words[i]==="range:" || words[i]==="range") {
+				ind = i;
+				break;
 			}
 		}
 		
-		var a = 0, b = 1, t = 15;
-		var meta = "";
-		var range = "";
+		var inputError = false;
 		
-		if (indRange >= 0) {
-			var word1 = thisView.nextWord(query, indRange+rlen);
-			a = query.substring(word1.start, word1.end);
+		// default search query
+		var a =0, b = 1, t = 15;
+		
+		if ((ind >= 0 && ind <= words.length-3 && words.length>=2) || (ind < 0 && words.length >= 2)){
+			var range = "";
+			if (ind >= 0) range += words[ind]+" ";
+			if (!isNaN(words[ind+1])) { a = +words[ind+1]; range += words[ind+1]; } 
+			else inputError = true;
+			if (!isNaN(words[ind+2])) { b = +words[ind+2]; range += " "+words[ind+2]; }
+			else inputError = true;
+			if (ind+3 <= words.length-1)
+				if (!isNaN(words[ind+3])) { t = +words[ind+3]; range += " "+words[ind+3]; }
+		} else inputError = true;
+		
+		if (inputError == false && query != "") {
+			query = query.replace(range, "");
+			query = query.replace(/\s+/g, " ");
+			query = query.replace(/^\s+|\s+$/g, "");
+			var meta = query.split(" ");
+			var queryUrl = jsRoutes.controllers.Application.doSearch(a, b, t).url+"?amount=10";
+			$("#search_wait").show();
+			$("#btn_search").hide();
+			
+			$.ajax({
+				url: queryUrl,
+				dataType: "json",
+				success: function(data) {
+					
+					var holder = $("#result_visual");
+					holder.html("");
+					var count = 0;
+					_.each(data, function(elem) {
+						if (thisView.containWords(elem.md, meta)==true) {
+							count ++;
+							// we can use a view here to display,
+							// but for the speed sake
+							var html = sensorTpl({
+								sid:count,
+								rank:elem.psc, 
+								uri:elem.uri,
+								meta:elem.md,
+								lssId: elem.lssId,
+								sds: elem.sds
+							});
+							
+							holder.append(html);
+							$(".sensor_plot", holder).hide();
+						}
+					});
+					
+					// start verifying
+					window.setTimeout(_.bind(thisView.verifySensor, thisView, 1, count, thisView.veriBatchSize, a, b, t, 10), 10);
+				},
+				error: function (jqXHR, status, errorThrown) {
+					alert("There is an error processing the request\nStatus: "+status+"\nError: "+errorThrown);
+				},
+				complete: function () {
+					$("#search_wait").hide();
+					$("#btn_search").show();
+				}
+			});
 		}
-		
-		var queryUrl = jsRoutes.controllers.Application.doSearch(a, b, t).url+"?amount=10";
-		$("#search_wait").show();
-		$("#btn_search").hide();
-		
-		$.ajax({
-			url: queryUrl,
-			dataType: "json",
-			success: function(data) {
-				
-				var holder = $("#result_visual");
-				holder.html("");
-				var count = 0;
-				_.each(data, function(elem) {
-					if (elem.md.indexOf(meta) >= 0) {
-						count ++;
-						// we can use a view here to display,
-						// but for the speed sake
-						var html = sensorTpl({
-							sid:count,
-							rank:elem.psc, 
-							uri:elem.uri,
-							meta:elem.md,
-							lssId: elem.lssId,
-							sds: elem.sds
-						});
-						
-						holder.append(html);
-						$(".sensor_plot", holder).hide();
-					}
-				});
-				
-				// start verifying
-				window.setTimeout(_.bind(thisView.verifySensor, thisView, 1, count, thisView.veriBatchSize, a, b, t, 10), 10);
-			},
-			error: function (jqXHR, status, errorThrown) {
-				alert("There is an error processing the request\nStatus: "+status+"\nError: "+errorThrown);
-			},
-			complete: function () {
-				$("#search_wait").hide();
-				$("#btn_search").show();
-			}
-		});
 	},
 	
 	getPostData: function(id, index) {

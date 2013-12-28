@@ -26,7 +26,7 @@ object Application extends Controller {
 	implicit val context = scala.concurrent.ExecutionContext.Implicits.global
 	
 	def index = Action {
-		Ok(views.html.index("Welcome to ThingSurf - Surfing the Internet of Things!"))
+		Ok(views.html.index("ThingSurf - Search Engine for the Internet of Things, Web of Things, and Sensor Data Clouds!"))
 	}
 
 	/**
