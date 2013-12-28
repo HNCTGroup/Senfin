@@ -50,28 +50,35 @@ object Application extends Controller {
 		
 		var jsResponse : JsArray = JsArray()
 		
-		// for each of the uri, call the verification server
-		data.sensors.foreach( sensor => {
+		// this is a very complicated part
+		// here, we first convert the data.sensors into a parallel collection
+		// using aggregate to transform each sensor data into the verification result (in the form
+		// of json object) and append it to the json array represented in jsRes
+		// the combination function (x, y) will combine two jsArray into one.
+		jsResponse = data.sensors.par.aggregate(jsResponse)( (jsRes, sensor) => {
 			// accumulate the returned json value to the list of responses
 			val holder: WSRequestHolder = WS.url(targetURL)
 			
 			val uri = sensor.sensorUri
 			val lssId = sensor.lssId
 			val sds = sensor.sds
+			val uiId = sensor.uiId
+			
+			Logger.info(""+uiId);
 			
 			val payLoad = Json.obj("uri" -> uri, "lssId" -> lssId, "sds" -> sds)
 			
 			val response = holder.post(payLoad.toString())
 			
-			val futr = response.map { resp =>
-				jsResponse = jsResponse.append(Json.obj("uri" -> uri, "veriResult" -> resp.json))
-			}
-			
-			// await the response to complete before return, so that we can verify sequentially
-			Await.result(futr, Duration.Inf)
+			Await.result(response.map { resp =>
+				jsRes.append(Json.obj("uiId" -> uiId, "uri" -> uri, "veriResult" -> resp.json))
+			}, Duration.Inf)
+
+		}, (x, y) => {
+		  x ++ y
 		})
 		
-		//Logger.info("---" + jsResponse.toString)
+		Logger.info("-------")
 		
 		return Future(Ok(jsResponse));
 	}

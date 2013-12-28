@@ -1,6 +1,7 @@
 package forms
 
 case class SensorData(
+    uiId: Int,
 	sensorUri: String,
 	lssId: Int,
 	sds: Int
@@ -27,6 +28,7 @@ object SensorVerificationForm {
             "valHigh" -> bigDecimal,
             "time" -> number,
             "sensors" -> list(mapping(
+                "uiId" -> number,
                 "sensorUri" -> text,
                 "lssId" -> number,
                 "sds" -> number

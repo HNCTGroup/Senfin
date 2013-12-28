@@ -1,5 +1,7 @@
 var Application = Backbone.View.extend({
 	
+	veriBatchSize : 5,
+	
 	events : {
 		"submit #form_search":"doSearch",
 		"click #btn_search":"doSearch",
@@ -20,7 +22,7 @@ var Application = Backbone.View.extend({
 	nextWord : function(str, indFrom) {
 		var start = 0;
 		var end = 0;
-		for (int i=indFrom; i<str.length-1; i++) {
+		for (var i=indFrom; i<str.length-1; i++) {
 			if (str.charAt(i)==" " && str.charAt(i+1)!=" ")
 				start = i+1;
 			if (str.charAt(i)!=" " && str.charAt(i+1)==" ") {
@@ -95,7 +97,7 @@ var Application = Backbone.View.extend({
 				});
 				
 				// start verifying
-				window.setTimeout(_.bind(thisView.verifySensor, thisView, 1, count, a, b, t, 10), 10);
+				window.setTimeout(_.bind(thisView.verifySensor, thisView, 1, count, thisView.veriBatchSize, a, b, t, 10), 10);
 			},
 			error: function (jqXHR, status, errorThrown) {
 				alert("There is an error processing the request\nStatus: "+status+"\nError: "+errorThrown);
@@ -107,18 +109,30 @@ var Application = Backbone.View.extend({
 		});
 	},
 	
-	verifySensor: function(id, total, a, b, h, k) {
-		if (id > total) return
-		
+	getPostData: function(id, index) {
 		var sensorId = "#sensor_"+id;
 		var plot_id = "#plot_"+id;
 		
-		var queryUrl = jsRoutes.controllers.Application.doVerification().url;
+		
 		var sensorUri = encodeURI($(sensorId+" .uri").val());
 		var lssId = $(sensorId+" input[name=lssId]").val();
 		var sds = $(sensorId+" input[name=sds]").val();
-		var postData = "valLow="+a+"&valHigh="+b+"&time="+h+"&numItems="+k
-						+"&sensors[0].sensorUri="+sensorUri+"&sensors[0].lssId="+lssId+"&sensors[0].sds="+sds;
+		
+		return "&sensors["+index+"].uiId="+id+"&sensors["+index+"].sensorUri="+sensorUri+
+				"&sensors["+index+"].lssId="+lssId+"&sensors["+index+"].sds="+sds;
+	},
+	
+	verifySensor: function(id, total, batchSize, a, b, h, k) {
+		if (id > total) return
+		
+		var postData = "valLow="+a+"&valHigh="+b+"&time="+h+"&numItems="+k;
+		var queryUrl = jsRoutes.controllers.Application.doVerification().url;
+		
+		for (var i = 0; i < batchSize; i++) {
+			if (id+i <= total)
+				postData += this.getPostData(id+i, i);
+			else break;
+		}
 		
 		thisView = this;
 		
@@ -128,71 +142,80 @@ var Application = Backbone.View.extend({
 			data: postData,
 			dataType: "json",
 			success: function(data) {
-				var sensorHolder = $(sensorId)
-				$(".verification_text", sensorHolder).remove();
-				// since we only verify one sensor at a time, get the first one out
-				data = data[0].veriResult;
 				
-				if (data.status == 0) {
-					sensorHolder.remove();
-					return;	// invalid sensor
-				}
-				
-				$(".sensor_msc", sensorHolder).html(data.msc);
-				
-				var splot = $(sensorId+" .sensor_plot");
-				splot.show()
-				
-				var ctx = $(plot_id).get(0).getContext("2d");
-				
-				$(plot_id).attr("width", splot.width());
-				$(plot_id).attr("height", splot.height());
-				
-				var chart = new Chart(ctx);
-				
-				var gdata = {labels:[], datasets:[{
-					fillColor : "rgba(220,220,220,0.5)",
-					strokeColor : "#FF0000",
-					pointColor : "#0000FF",
-					pointStrokeColor : "rgba(220,220,220,0.5)",
-					data : []
-				}]};
-				
-				var listPair = data.ds;
-				
-				var distance = splot.width() / data.ds.length
-				var amount = Math.round(50 / distance);
-				var count = 0;
-				var min = 100000;
-				var max = -100000;
-				_.each(listPair, function(pair) {
+				_.each(data, function(sensor){
+					var uiId = sensor.uiId;
 					
-					if (amount == 0 || count % amount == 0) 
-						gdata.labels.push(getTimeLabel(pair.ts));
-					else gdata.labels.push("");
+					var sensorId = "#sensor_"+uiId;
+					var plot_id = "#plot_"+uiId;
 					
-					count ++;
+					var sensorHolder = $(sensorId)
+					$(".verification_text", sensorHolder).remove();
+					// since we only verify one sensor at a time, get the first one out
+					var veri = sensor.veriResult;
 					
-					gdata.datasets[0].data.push(pair.val);
+					if (veri.status == 0) {
+						sensorHolder.remove();
+						return;	// invalid sensor
+					}
 					
-					if (pair.val > max) max = pair.val;
-					if (pair.val < min) min = pair.val;
+					$(".sensor_msc", sensorHolder).html(veri.msc);
+					
+					var splot = $(sensorId+" .sensor_plot");
+					splot.show()
+					
+					var ctx = $(plot_id).get(0).getContext("2d");
+					
+					$(plot_id).attr("width", splot.width());
+					$(plot_id).attr("height", splot.height());
+					
+					var chart = new Chart(ctx);
+					
+					var gdata = {labels:[], datasets:[{
+						fillColor : "rgba(220,220,220,0.5)",
+						strokeColor : "#FF0000",
+						pointColor : "#0000FF",
+						pointStrokeColor : "rgba(220,220,220,0.5)",
+						data : []
+					}]};
+					
+					var listPair = veri.ds;
+					
+					var distance = splot.width() / veri.ds.length
+					var amount = Math.round(50 / distance);
+					var count = 0;
+					var min = 100000;
+					var max = -100000;
+					_.each(listPair, function(pair) {
+						
+						if (amount == 0 || count % amount == 0) 
+							gdata.labels.push(getTimeLabel(pair.ts));
+						else gdata.labels.push("");
+						
+						count ++;
+						
+						gdata.datasets[0].data.push(pair.val);
+						
+						if (pair.val > max) max = pair.val;
+						if (pair.val < min) min = pair.val;
+					});
+					
+					var options = {
+						bezierCurve : false,
+						animation: false,
+						pointRadius: 1,
+					}
+					
+					if (min == max) {
+						options.scaleOverride = true;
+						options.scaleSteps = 2;
+						options.scaleStepWidth = (min==0)?0.5:min;
+						options.scaleStartValue = (min==0)?-0.5:0;
+					}
+					
+					chart.Line(gdata, options);
 				});
 				
-				var options = {
-					bezierCurve : false,
-					animation: false,
-					pointRadius: 1,
-				}
-				
-				if (min == max) {
-					options.scaleOverride = true;
-					options.scaleSteps = 2;
-					options.scaleStepWidth = min;
-					options.scaleStartValue = 0;
-				}
-				
-				chart.Line(gdata, options);
 			},
 			error: function (jqXHR, status, errorThrown) {
 				//alert("There is an error processing the request\nStatus: "+status+"\nError: "+errorThrown);
@@ -200,12 +223,10 @@ var Application = Backbone.View.extend({
 				sensorHolder.remove();	// cannot be verified, remove it!!
 			},
 			complete: function() {
-				
+				// verify the next sensor
+				window.setTimeout(_.bind(thisView.verifySensor, thisView, id+batchSize, total, batchSize, a, b, h, k), 100);
 			}
 		});
-		
-		// verify the next sensor
-		window.setTimeout(_.bind(thisView.verifySensor, thisView, id+1, total, a, b, h, k), 100);
 
 	}
 	
