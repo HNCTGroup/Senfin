@@ -1,6 +1,8 @@
+var sortedArray = null;
+
 var Application = Backbone.View.extend({
 	
-	veriBatchSize : 5,
+	veriBatchSize : 15,
 	
 	events : {
 		"submit #form_search":"doSearch",
@@ -27,6 +29,8 @@ var Application = Backbone.View.extend({
 	},
 	
 	doSearch : function (event) {
+		sortedArray = new Array();
+		
 		event.preventDefault();
 		var thisView = this;
 		
@@ -124,6 +128,28 @@ var Application = Backbone.View.extend({
 				"&sensors["+index+"].lssId="+lssId+"&sensors["+index+"].sds="+sds;
 	},
 	
+	findAfterSensor: function(sensorId, matchScore) {
+		
+		var obj = {"id":sensorId, "score":matchScore};
+		
+		if (sortedArray.length == 0) {
+			sortedArray.push(obj);
+			return "";
+		}
+		
+		for (var i = 0; i < sortedArray.length;i++) {
+			if (sortedArray[i].score <= matchScore) {
+				var id = "";
+				if (i > 0) id = sortedArray[i-1].id;
+				sortedArray.splice(i, 0, obj);
+				return id;
+			}
+				
+		}
+		
+		return sortedArray[sortedArray.length-1].id;
+	},
+	
 	verifySensor: function(id, total, batchSize, a, b, h, k) {
 		if (id > total) return
 		
@@ -138,12 +164,26 @@ var Application = Backbone.View.extend({
 		
 		thisView = this;
 		
+		var holder = $("#result_visual");
+		
 		$.ajax({
 			url: queryUrl,
 			type:"POST",
 			data: postData,
 			dataType: "json",
 			success: function(data) {
+				
+				/*for (var i = 0; i < data.length; i ++) {
+					for (var j = i+1; j < data.length; j++) {
+						var s1 = data[i].veriResult.msc;
+						var s2 = data[j].veriResult.msc;
+						if (s1 > s2) {
+							var temp = data[i];
+							data[i] = data[j];
+							data[j] = temp;
+						}
+					}
+				}*/
 				
 				_.each(data, function(sensor){
 					var uiId = sensor.uiId;
@@ -216,6 +256,16 @@ var Application = Backbone.View.extend({
 					}
 					
 					chart.Line(gdata, options);
+					
+					var afterSensorId = thisView.findAfterSensor(sensorId, veri.msc);
+					
+					if (afterSensorId != "") {
+						sensorHolder.remove();
+						sensorHolder.insertAfter($(afterSensorId));
+					} else {
+						sensorHolder.remove();
+						holder.prepend(sensorHolder);
+					}
 				});
 				
 			},
