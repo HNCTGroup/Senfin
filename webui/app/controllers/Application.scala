@@ -3,17 +3,14 @@ package controllers
 import play.api._
 import play.api.mvc._
 import play.api.libs.json._
-
 import play.Logger
-
 import play.api.libs.ws._
 import scala.concurrent.Future
 import play.api.libs.ws.WS.WSRequestHolder
-
 import forms._
-
 import scala.concurrent._
 import scala.concurrent.duration._
+import play.mvc.Http
 
 object Application extends Controller {
 
@@ -36,6 +33,7 @@ object Application extends Controller {
 	def doSearch(rStart: Float, rEnd: Float, duration: Integer, k: Integer) = Action.async {
 		val targetURL = serviceURL + "/" + rStart + "/" + rEnd //+ "/" + duration + "/" + k;
 		Logger.info(targetURL);
+		Logger.info(Http.Request.current().remoteAddress());
 		val holder: WSRequestHolder = WS.url(targetURL)
 		val response = holder.get().map {
 			resp => resp.json.toString
