@@ -19,24 +19,6 @@ var Application = Backbone.View.extend({
 		return false;
 	},
 	
-	nextWord : function(str, indFrom) {
-		var ib = 0, ie = 0;
-		if (indFrom < str.length) {
-			for (ie=indFrom+1; ie<str.length; ie++) {
-				if (str.charAt(ie-1)==" " && str.charAt(ie)!=" ")
-					ib = ie;
-				if (str.charAt(ie-1)!=" " && str.charAt(ie)==" ")
-					break;
-			}
-			if (ib==0) ib = indFrom;
-		} else {
-			ib = str.length;
-			ie = ib;
-		}
-		var obj = { ib: ib, ie: ie }
-		return obj;
-	},
-	
 	containWords : function(str, meta) {
 		var contained = false;
 		for (var i=0; i<meta.length; i++)
