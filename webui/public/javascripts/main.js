@@ -132,11 +132,6 @@ var Application = Backbone.View.extend({
 		
 		var obj = {"id":sensorId, "score":matchScore};
 		
-		if (sortedArray.length == 0) {
-			sortedArray.push(obj);
-			return "";
-		}
-		
 		for (var i = 0; i < sortedArray.length;i++) {
 			if (sortedArray[i].score <= matchScore) {
 				var id = "";
@@ -147,6 +142,7 @@ var Application = Backbone.View.extend({
 				
 		}
 		
+		sortedArray.push(obj);
 		return sortedArray[sortedArray.length-1].id;
 	},
 	
