@@ -1,4 +1,4 @@
-SenfinUI
+ThingSurfUI
 ========
 
-UI for SENFIN
+Front-end for the ThingSurf framework and search engine
