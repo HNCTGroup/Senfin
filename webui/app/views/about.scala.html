@@ -19,12 +19,14 @@ For example, excessively power consuming electronic appliances are those whose e
 To perform a search for sensors via this web site, please enter a search query in either of following forms:</p>
 
 <ul>
-<li>"X <b>range:</b>a b t Y" or "X <b>range </b>a b t Y": to find sensors in the IoT whose output falls <i>mostly</i> within <b>[a, b]</b> during the last <b>t</b> minutes and description contains any word in the strings X or Y. 
-For example: "temperature <b>range </b>18 19" or "temperature <b>range:</b>18 19 °C".</li>
+<li>"a b" : to find sensors in the IoT whose output falls <i>mostly</i> within <b>[a, b]</b> during the last <b>15</b> minutes.
+For example: "18 19".</li>
 <li>"a b t" : to find sensors in the IoT whose output falls <i>mostly</i> within <b>[a, b]</b> during the last <b>t</b> minutes.
 For example: "18 19 10".</li>
-<li>"a b" : a special case,  to find sensors in the IoT whose output falls <i>mostly</i> within <b>[a, b]</b> during the last <b>15</b> minutes.
-For example: "18 19".</li>
+<li>"X <b>range:</b>a b Y" or "X <b>range </b>a b Y": to find sensors in the IoT whose output falls <i>mostly</i> within <b>[a, b]</b> during the last <b>15</b> minutes and description contains any word in X or Y (where X and Y are any string including empty string, <b>"range:"</b> and <b>"range"</b> are the reserved keywords). 
+For example: "temperature <b>range:</b>18 19" or "temperature <b>range </b>18 19 °C".</li>
+<li>"X <b>range:</b>a b t Y" or "X <b>range </b>a b t Y": to find sensors in the IoT whose output falls <i>mostly</i> within <b>[a, b]</b> during the last <b>t</b> minutes and description contains any word in X or Y (where X and Y are any string including empty string, <b>"range:"</b> and <b>"range"</b> are the reserved keywords). 
+For example: "temperature <b>range:</b>18 19 30" or "temperature <b>range </b>18 19 30 °C".</li>
 </ul>
 
 <p>After entering the query, sensors that are found by ThingSurf will be returned along with their meta-information and actual sensor output. The results are ranked based on their relevance.</p>
