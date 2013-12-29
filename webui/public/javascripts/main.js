@@ -2,7 +2,7 @@ var sortedArray = null;
 
 var Application = Backbone.View.extend({
 	
-	veriBatchSize : 15,
+	veriBatchSize : 5,
 	
 	events : {
 		"submit #form_search":"doSearch",
