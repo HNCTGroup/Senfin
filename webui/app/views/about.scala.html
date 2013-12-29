@@ -6,7 +6,7 @@
 For example, a car driver may want to find an empty parking spot nearby, or a building manager may want to find out which electronic appliances are currently consuming excessive power. 
 Since Things (i.e., parking spots, electronic appliances) are augmented with sensors, the underlying problem that needs to be solved is:</p> 
 
-<p><center><b>Find sensors in the IoT, whose <i>recent</i> output is within a certain range [a, b].</b></center></p>
+<p><center><b>Find sensors in the IoT, whose <i>recent</i> output is within a certain real value range [a, b].</b></center></p>
 
 <p>The information about the found sensors (e.g., their type, location, and description) will be used to answer the above questions.
 For example, excessively power consuming electronic appliances are those whose embedded sensors are reading values in the range [1500 Watts, 2000 Watts].</p>
@@ -23,10 +23,10 @@ To perform a search for sensors via this web site, please enter a search query i
 For example: "18 19".</li>
 <li>"a b t" : to find sensors in the IoT whose output falls <i>mostly</i> within <b>[a, b]</b> during the last <b>t</b> minutes.
 For example: "18 19 10".</li>
-<li>"X <b>range:</b>a b Y" or "X <b>range </b>a b Y": to find sensors in the IoT whose output falls <i>mostly</i> within <b>[a, b]</b> during the last <b>15</b> minutes and description contains any word in X or Y (where X and Y are any string including empty string, <b>"range:"</b> and <b>"range"</b> are the reserved keywords). 
-For example: "temperature <b>range:</b>18 19" or "temperature <b>range </b>18 19 °C".</li>
-<li>"X <b>range:</b>a b t Y" or "X <b>range </b>a b t Y": to find sensors in the IoT whose output falls <i>mostly</i> within <b>[a, b]</b> during the last <b>t</b> minutes and description contains any word in X or Y (where X and Y are any string including empty string, <b>"range:"</b> and <b>"range"</b> are the reserved keywords). 
-For example: "temperature <b>range:</b>18 19 30" or "temperature <b>range </b>18 19 30 °C".</li>
+<li>"X <b>range:</b>a b Y": to find sensors in the IoT whose output falls <i>mostly</i> within <b>[a, b]</b> during the last <b>15</b> minutes and description contains any word in X or Y (where X and Y are any string including empty string, <b>"range:"</b> is the reserved keywords). 
+For example: "temperature <b>range:</b>18 19" or "temperature <b>range:</b>18 19 °C".</li>
+<li>"X <b>range:</b>a b t Y": to find sensors in the IoT whose output falls <i>mostly</i> within <b>[a, b]</b> during the last <b>t</b> minutes and description contains any word in X or Y (where X and Y are any string including empty string, <b>"range:"</b> is the reserved keywords). 
+For example: "temperature <b>range:</b>18 19 30" or "temperature <b>range:</b>18 19 30 °C".</li>
 </ul>
 
 <p>After entering the query, sensors that are found by ThingSurf will be returned along with their meta-information and actual sensor output. The results are ranked based on their relevance.</p>

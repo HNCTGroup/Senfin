@@ -38,7 +38,7 @@ var Application = Backbone.View.extend({
 		var words = query.split(" ");
 		var ind = -1;
 		for (var i=0; i<words.length; i++) {
-			if (words[i]==="range:" || words[i]==="range") {
+			if (words[i]==="range:") {
 				ind = i;
 				break;
 			}
@@ -107,7 +107,8 @@ var Application = Backbone.View.extend({
 					$("#btn_search").show();
 				}
 			});
-		}
+		} else
+			alert("There a sytax error in the input query!\nPlease type in \"a b\" for a simplest query that finds sensors in the Web\nwhose current output falls in the real value range [a, b].\nPlease see About/Help for correct query sytaxes and examples.");
 	},
 	
 	getPostData: function(id, index) {
