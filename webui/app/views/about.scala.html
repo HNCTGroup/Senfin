@@ -6,14 +6,14 @@
 For example, a car driver may want to find an empty parking spot nearby, or a building manager may want to find out which electronic appliances are currently consuming excessive power. 
 Since Things (i.e., parking spots, electronic appliances) are augmented with sensors, the underlying problem that needs to be solved is:</p> 
 
-<p><center><b>Find sensors in the IoT, whose <i>recent</i> output is within a certain real value range [a, b].</b></center></p>
+<p><center><b>Find sensors in the IoT, whose <i>recent</i> output values fall <i>mostly</i> within a certain range [a, b].</b></center></p>
 
 <p>The information about the found sensors (e.g., their type, location, and description) will be used to answer the above questions.
 For example, excessively power consuming electronic appliances are those whose embedded sensors are reading values in the range [1500 Watts, 2000 Watts].</p>
 
 <p>Our search engine, <b>ThingSurf</b>, is an attempt to tackle this problem. Given a value range <b>[a, b]</b>, and a time interval <b>t</b> time units, ThingSurf returns sensors available in the IoT whose output during the last <b>t</b> time units fall <i>mostly</i> within <b>[a, b]</b>.</p> 
 
-<p>Currently, ThingSurf is still in early stage, indexing live output of more than 50000 sensors on a single commodity server. Its search service can be accessed by any software program through a set of RESTful API calls.</p>
+<p>Currently, ThingSurf is still in an early development stage. It is crawling and indexing live output of more than 50000 sensors from different sensor data sources on the Web. Its search service can be accessed by any software program through a set of RESTful API calls.</p>
 
 <p>This web site is a front-end for ThingSurf, which uses ThingSurf's API. 
 To perform a search for sensors via this web site, please enter a search query in either of following forms:</p>

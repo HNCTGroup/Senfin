@@ -53,12 +53,15 @@
 		        <form id="form_search">
 		        	<div class="searchbox">
 		        		<button id="btn_search" type="button" class="btn btn-primary">SEARCH</button>
-	        			<input id="input_search" type="text" placeholder="Type in &ldquo;a b&rdquo; to find sensors in the Web whose output falls within [a, b]. (see About/Help for more syntaxes)"/>
+	        			<input id="input_search" type="text" placeholder="Type in &ldquo;a b&rdquo; to find sensors in the Web whose output fall within [a, b] (more syntaxes in About/Help)."/>
 	        			<img id="search_wait" src="@routes.Assets.at("images/searching.gif")" style="display:none" />
 		        		<div class="clearfix"></div>
 		        	</div>
-		        	<!-- <div><span>Example search: &ldquo;<b>meta:</b>temperature <b>range:</b>18 19&rdquo; or &ldquo;range:</b>18 19 <b>meta:</b>temperature<b>&rdquo;</span></div>
-		        	-->
+		        	<div class="examplequery">
+		        		Example queries: <b>&ldquo;</b>18 19<b>&rdquo;</b> <b>or</b> <b>&ldquo;</b>18 19 °C<b>&rdquo;</b> <b>or</b>		        		
+		        		<b>&ldquo;</b>temperature <i>range:</i>18 19 °C<b>&rdquo;</b> <b>or</b> <b>&ldquo;</b>temperature °C <i>range:</i>18 19<b>&rdquo;</b>
+		        	</div>
+		        	
 		        </form>
 	        </div>
 	        <div class="container">
