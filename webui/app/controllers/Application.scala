@@ -30,10 +30,10 @@ object Application extends Controller {
 	 * Action.async is a helper function that return an asynchronous action, which produce
 	 * a Future[SimpleResult]
 	 */
-	def doSearch(rStart: Float, rEnd: Float, duration: Integer, k: Integer) = Action.async {
+	def doSearch(rStart: Float, rEnd: Float, duration: Integer, k: Integer) = Action.async { request =>
 		val targetURL = serviceURL + "/" + rStart + "/" + rEnd //+ "/" + duration + "/" + k;
 		Logger.info(targetURL);
-		Logger.info(Http.Request.current().remoteAddress());
+		Logger.info(request.remoteAddress);
 		val holder: WSRequestHolder = WS.url(targetURL)
 		val response = holder.get().map {
 			resp => resp.json.toString
