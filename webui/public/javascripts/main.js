@@ -1,8 +1,7 @@
 var sortedArray = null;
-
 var Application = Backbone.View.extend({
 	
-	veriBatchSize : 15,
+	veriBatchSize : 5,
 	
 	events : {
 		"submit #form_search":"doSearch",
@@ -147,7 +146,7 @@ var Application = Backbone.View.extend({
 	},
 	
 	verifySensor: function(id, total, batchSize, a, b, h, k) {
-		if (id > total) return
+		if (id > total)	return;
 		
 		var postData = "valLow="+a+"&valHigh="+b+"&time="+h+"&numItems="+k;
 		var queryUrl = jsRoutes.controllers.Application.doVerification().url;
@@ -168,18 +167,6 @@ var Application = Backbone.View.extend({
 			data: postData,
 			dataType: "json",
 			success: function(data) {
-				
-				/*for (var i = 0; i < data.length; i ++) {
-					for (var j = i+1; j < data.length; j++) {
-						var s1 = data[i].veriResult.msc;
-						var s2 = data[j].veriResult.msc;
-						if (s1 > s2) {
-							var temp = data[i];
-							data[i] = data[j];
-							data[j] = temp;
-						}
-					}
-				}*/
 				
 				_.each(data, function(sensor){
 					var uiId = sensor.uiId;
@@ -251,17 +238,10 @@ var Application = Backbone.View.extend({
 						options.scaleStartValue = (min==0)?-0.5:0;
 					}
 					
-					chart.Line(gdata, options);
-					
 					var afterSensorId = thisView.findAfterSensor(sensorId, veri.msc);
 					
-					if (afterSensorId != "") {
-						sensorHolder.remove();
-						sensorHolder.insertAfter($(afterSensorId));
-					} else {
-						sensorHolder.remove();
-						holder.prepend(sensorHolder);
-					}
+					if (afterSensorId != "") sensorHolder.insertAfter($(afterSensorId));
+					else holder.prepend(sensorHolder);
 				});
 				
 			},
