@@ -32,8 +32,7 @@ object Application extends Controller {
 	 */
 	def doSearch(rStart: Float, rEnd: Float, duration: Integer, k: Integer) = Action.async { request =>
 		val targetURL = serviceURL + "/" + rStart + "/" + rEnd //+ "/" + duration + "/" + k;
-		Logger.info(targetURL);
-		Logger.info(request.remoteAddress);
+		Logger.info("From "+request.remoteAddress+", q = ["+rStart+", "+rEnd+"]");
 		val holder: WSRequestHolder = WS.url(targetURL)
 		val response = holder.get().map {
 			resp => resp.json.toString
@@ -62,7 +61,7 @@ object Application extends Controller {
 			val sds = sensor.sds
 			val uiId = sensor.uiId
 			
-			Logger.info(""+uiId);
+			//Logger.info(""+uiId);
 			
 			val payLoad = Json.obj("uri" -> uri, "lssId" -> lssId, "sds" -> sds)
 			
@@ -76,7 +75,7 @@ object Application extends Controller {
 		  x ++ y
 		})
 		
-		Logger.info("-------")
+		//Logger.info("-------")
 		
 		return Future(Ok(jsResponse));
 	}
