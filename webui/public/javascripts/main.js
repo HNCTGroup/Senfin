@@ -238,6 +238,8 @@ var Application = Backbone.View.extend({
 						options.scaleStartValue = (min==0)?-0.5:0;
 					}
 					
+					chart.Line(gdata, options);
+					
 					var afterSensorId = thisView.findAfterSensor(sensorId, veri.msc);
 					
 					if (afterSensorId != "") sensorHolder.insertAfter($(afterSensorId));
