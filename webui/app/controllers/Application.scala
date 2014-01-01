@@ -11,11 +11,14 @@ import forms._
 import scala.concurrent._
 import scala.concurrent.duration._
 import play.mvc.Http
+import java.util.Calendar
 
 object Application extends Controller {
 
 	val serviceURL = "http://thingsurf.dyndns.org:1180/search/css"
 	val verificationURL = "http://thingsurf.dyndns.org:1180/verification/sensor"
+  //val serviceURL = "http://192.168.178.38:1180/search/css"
+  //val verificationURL = "http://192.168.178.38:1180/verification/sensor"
 		
 	/**
 	 * This is to support async action.
@@ -23,7 +26,7 @@ object Application extends Controller {
 	implicit val context = scala.concurrent.ExecutionContext.Implicits.global
 	
 	def index = Action {
-		Ok(views.html.index("ThingSurf - Search Engine for the Internet of Things, Web of Things, and Sensor Data Clouds!"))
+		Ok(views.html.index("ThingSurf - Content-based Search Engine for the Internet of Things, Web of Things, and Sensor Data Clouds!"))
 	}
 
 	/**
@@ -32,7 +35,7 @@ object Application extends Controller {
 	 */
 	def doSearch(rStart: Float, rEnd: Float, duration: Integer, k: Integer) = Action.async { request =>
 		val targetURL = serviceURL + "/" + rStart + "/" + rEnd //+ "/" + duration + "/" + k;
-		Logger.info("From "+request.remoteAddress+", q = ["+rStart+", "+rEnd+"]");
+		Logger.info("At "+Calendar.getInstance().getTime()+", "+request.remoteAddress+" requests q = ["+rStart+", "+rEnd+"]");
 		val holder: WSRequestHolder = WS.url(targetURL)
 		val response = holder.get().map {
 			resp => resp.json.toString

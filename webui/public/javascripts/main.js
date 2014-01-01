@@ -67,6 +67,7 @@ var Application = Backbone.View.extend({
 			query = query.replace(range, "");
 			query = query.replace(/\s+/g, " ");
 			query = query.replace(/^\s+|\s+$/g, "");
+			query = query.toLowerCase();
 			var meta = query.split(" ");
 			var queryUrl = jsRoutes.controllers.Application.doSearch(a, b, t).url+"?amount=10";
 			$("#search_wait").show();
@@ -81,7 +82,8 @@ var Application = Backbone.View.extend({
 					holder.html("");
 					var count = 0;
 					_.each(data, function(elem) {
-						if (thisView.containWords(elem.md, meta)==true) {
+						if (thisView.containWords(elem.md.toLowerCase(), meta)==true ||
+						    thisView.containWords(elem.uri.toLowerCase(), meta)) {
 							count ++;
 							// we can use a view here to display,
 							// but for the speed sake
